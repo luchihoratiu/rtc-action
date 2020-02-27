@@ -1,0 +1,9 @@
+---
+name: 'RuboCop TODO Checker'
+description: 'Checks that no new rubocop offenses are added when using .rubocop_todo.yml'
+branding:
+  icon: 'check-square'
+  color: 'green'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
