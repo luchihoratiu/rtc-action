@@ -7,8 +7,8 @@ How it works:
  - parse `rubocop_todo.yml` and extract number of offenses for each Cop.
  - execute `rubocop --auto-gen-config` to generate the new config.
  - parse again `rubocop_todo.yml` and extract number of offenses for each Cop.
- - make a diff between old offense and new offense.
- - if new offenses > old offenses it will print how many offenses were added and to which Cops.
+ - make a diff between old offenses and new offenses.
+ - if `new offenses > old offenses` it will print how many offenses were added and to which Cops.
  - prints a summary.
 
 ### Example usage:
