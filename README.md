@@ -1,4 +1,9 @@
-# RuboCop TODO Checker - docker action
+# RuboCop TODO Checker
+
+![alt text](https://img.shields.io/badge/RUBY-~>2.3-red) 
+![alt text](https://img.shields.io/badge/VERSION-0.0.5-brightgreen)
+
+### Docker based github action usses ruby and rubocop.
 
 ### Concepts
 This action will use the `.rubocop_todo.yml` from your project and will determine if new offenses were added in the current commit.
@@ -25,8 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: gimmyxd/rtc-action@0.0.3.pre
+      - uses: gimmyxd/rtc-action@0.0.5
 ```
 
 ### Example Job Result
-![alt text](https://i.postimg.cc/ZRPdgN6q/Screenshot-2020-02-27-at-23-27-02.png)
+![alt text](https://i.postimg.cc/Vk3f0BNH/Screenshot-2020-02-28-at-00-51-56.png)
