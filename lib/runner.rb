@@ -7,7 +7,6 @@ class Runner
   attr_reader :errors
 
   def initialize
-    RubocopLoader.call
     @errors = {}
   end
 
@@ -29,7 +28,10 @@ class Runner
 
   def execute
     STDOUT.puts('Installing gems')
-    system('bundle install -j4')
+    system('bundle install -j4 --retry 3')
+    STDOUT.puts("Done.\n\n")
+
+    RubocopLoader.call
 
     STDOUT.puts('Getting current offenses')
     actual_offenses = RubocopTodoParser.call
