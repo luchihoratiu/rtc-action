@@ -6,7 +6,7 @@
 ### Docker based github action usses ruby and rubocop.
 
 ### Concepts
-This action will use the `.rubocop_todo.yml` from your project and will determine if new offenses were added in the current commit.
+This action will use `.rubocop_todo.yml` and will determine if new offenses were added in the current commit.
 
 How it works:
  - parse `rubocop_todo.yml` and extract number of offenses for each Cop.
