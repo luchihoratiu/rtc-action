@@ -28,6 +28,9 @@ class Runner
   end
 
   def execute
+    STDOUT.puts('Installing gems')
+    system('bundle install -j4')
+
     STDOUT.puts('Getting current offenses')
     actual_offenses = RubocopTodoParser.call
     STDOUT.puts("Done.\n\n")
