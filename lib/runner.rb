@@ -38,7 +38,7 @@ class Runner
     STDOUT.puts("Success.\n\n".green)
 
     STDOUT.puts('Running rubocop --auto-gen-config')
-    system('bundle exec rubocop --auto-gen-config --exclude-limit 1000')
+    system('bundle exec rubocop --auto-gen-config --exclude-limit 0')
 
     STDOUT.puts('Getting new offenses')
     commit_offenses = RubocopTodoParser.call
