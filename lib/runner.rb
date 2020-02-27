@@ -10,7 +10,7 @@ class Runner
     @errors = {}
   end
 
-  def status
+  def exit_code
     errors.any? ? 1 : 0
   end
 
@@ -21,28 +21,28 @@ class Runner
   def error_message
     error_message = []
     errors.each_pair do |key, value|
-      error_message << "Error: #{key} has #{value} new offenses"
+      error_message << "Error: #{key} has #{value} new offenses".red
     end
     error_message.join("\n")
   end
 
   def execute
     STDOUT.puts('Installing gems')
-    system('bundle install -j4 --retry 3')
-    STDOUT.puts("Done.\n\n")
+    system('bundle install -j4 --retry 3 --quiet')
+    STDOUT.puts("Success.\n\n".green)
 
     RubocopLoader.call
 
     STDOUT.puts('Getting current offenses')
     actual_offenses = RubocopTodoParser.call
-    STDOUT.puts("Done.\n\n")
+    STDOUT.puts("Success.\n\n".green)
 
     STDOUT.puts('Running rubocop --auto-gen-config')
-    system('bundle exec rubocop --auto-gen-config &> /dev/null')
+    system('bundle exec rubocop --auto-gen-config --exclude-limit 1000')
 
     STDOUT.puts('Getting new offenses')
     commit_offenses = RubocopTodoParser.call
-    STDOUT.puts("Done.\n\n")
+    STDOUT.puts("Success.\n\n".green)
 
     commit_offenses.each_pair do |key, value|
       diff = value - actual_offenses.fetch(key, 0)

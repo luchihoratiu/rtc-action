@@ -9,7 +9,7 @@ runner.execute
 if runner.success?
   STDOUT.puts('No new offenses found'.green)
 else
-  STDOUT.puts runner.error_message.red
+  STDOUT.puts runner.error_message
 end
 
-exit runner.status
+exit runner.exit_code
