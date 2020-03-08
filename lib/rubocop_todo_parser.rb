@@ -3,17 +3,11 @@
 class RubocopTodoParser
   class << self
     def call
-      offense_lines = rubocop_todo_lines.select! do |el|
-        el =~ Regexp.new(cops)
-      end
-
+      offense_lines = rubocop_todo_lines.select! { |el| el =~ Regexp.new(cops) }
       offense_lines = offense_lines.map(&:chomp).each_slice(2).map do |el|
         [el[0].gsub!('# Offense count: ', '').to_i, el[1].delete!(':')]
       end
-
-      offense_lines.map!(&:reverse)
-
-      Hash[offense_lines]
+      Hash[offense_lines.map!(&:reverse)]
     end
 
     private
