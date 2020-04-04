@@ -10,14 +10,17 @@ class Application
       runner.execute
       if runner.success?
         msg = 'No new offenses found!'
-        comment = { body: "#{msg} :thumbsup:" }
         STDOUT.puts(msg.green)
+
+        comment = { body: "#{msg} :thumbsup:" }
       else
-        comment = { body: runner.error_message.no_colors }
-        STDOUT.puts runner.error_message
+        error_message = runner.error_message
+        STDOUT.puts error_message
+
+        comment = { body: error_message.no_colors }
       end
 
-      update_github_pr(comment) if ENV['UPDATE_PR'] == true
+      update_github_pr(comment)
 
       exit runner.exit_code
     end
@@ -25,7 +28,9 @@ class Application
     private
 
     def update_github_pr(comment)
-      STDOUT.puts 'RTC_TOKEN not set, skipping PR update!'
+      STDOUT.puts 'RTC_TOKEN not set, skipping PR update!' unless ENV['RTC_TOKEN']
+      STDOUT.puts 'Updating PR'.cyan
+
       require 'octokit'
 
       client = Octokit::Client.new(access_token: ENV['RTC_TOKEN'])
