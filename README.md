@@ -1,7 +1,7 @@
 # RuboCop TODO Checker
 
 ![alt text](https://img.shields.io/badge/RUBY-~>2.3-red)
-![alt text](https://img.shields.io/badge/VERSION-0.1.0-brightgreen)
+![alt text](https://img.shields.io/badge/VERSION-0.1.1-brightgreen)
 
 ### Docker based github action usses ruby and rubocop.
 
