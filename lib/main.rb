@@ -20,7 +20,7 @@ class Application
         comment = { body: error_message.no_colors }
       end
 
-      update_github_pr(comment)
+      update_github_pr(comment) if ENV['UPDATE_PR'] == 'true'
 
       exit runner.exit_code
     end
