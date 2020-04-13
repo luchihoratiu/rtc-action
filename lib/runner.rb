@@ -2,51 +2,78 @@
 
 require_relative 'rubocop_loader'
 require_relative 'rubocop_todo_parser'
+require_relative 'rubocop_output_parser'
+
+require 'hashdiff'
+require 'open3'
 
 class Runner
-  attr_reader :errors
+  DELIMITER = '--'
+
+  attr_reader :offenses
 
   def initialize
-    @errors = {}
+    @offenses = {}
   end
 
   def exit_code
-    errors.any? ? 1 : 0
+    offenses.any? ? 1 : 0
   end
 
   def success?
-    errors.empty?
+    offenses.empty?
   end
 
   def error_message
     error_message = []
-    errors.each_pair do |key, value|
-      error_message << "Error: #{key} has #{value} new offenses".red
+    offenses.each_pair do |key, value|
+      error_message << "#{key} has #{value} new offenses".red
     end
     error_message.join("\n")
   end
 
   def execute
-    STDOUT.puts('Installing gems')
+    STDOUT.puts('Installing gems'.cyan)
     system('bundle install -j4 --retry 3 --quiet')
     STDOUT.puts("Success.\n\n".green)
 
-    RubocopLoader.call
+    STDOUT.puts('Generating diff'.cyan)
+    diff = Hashdiff.diff(pr_offenses, master_offenses, delimiter: DELIMITER)
+    extract_form_diff(diff)
+    STDOUT.puts("Done. \n\n".green)
+  end
 
-    STDOUT.puts('Getting current offenses')
-    actual_offenses = RubocopTodoParser.call
-    STDOUT.puts("Success.\n\n".green)
+  private
 
-    STDOUT.puts('Running rubocop --auto-gen-config')
-    system('bundle exec rubocop --auto-gen-config --exclude-limit 0')
+  def files
+    @files ||= `git diff --name-only HEAD HEAD~1`.split("\n").select { |e| e =~ /.rb/ }.join
+  end
 
-    STDOUT.puts('Getting new offenses')
-    commit_offenses = RubocopTodoParser.call
-    STDOUT.puts("Success.\n\n".green)
+  def pr_offenses
+    pr_raw_data = `rubocop --auto-gen-config --exclude-limit 2000 --format j #{files}`
+    RubcopOutputParser.call(pr_raw_data)
+  end
 
-    commit_offenses.each_pair do |key, value|
-      diff = value - actual_offenses.fetch(key, 0)
-      errors[key] = diff if diff.positive?
+  def master_offenses
+    Open3.capture3('git checkout . && git checkout HEAD^')
+
+    master_raw_data = `rubocop --auto-gen-config --exclude-limit 2000 --format j #{files}`
+    RubcopOutputParser.call(master_raw_data)
+  end
+
+  def extract_form_diff(diff)
+    diff.each do |line|
+      file, cop = line[1].split(DELIMITER)
+      offenses[file] ||= {}
+      if line[0] == '~'
+        if line[2] > line[3]
+          offenses[file][cop] = "changed from #{line[3]} to #{line[2]}"
+        end
+      else
+        offenses[file][cop] = line[2]
+      end
     end
+
+    offenses
   end
 end

@@ -28,7 +28,9 @@ class Application
     private
 
     def update_github_pr(comment)
-      STDOUT.puts 'RTC_TOKEN not set, skipping PR update!' unless ENV['RTC_TOKEN']
+      unless ENV['RTC_TOKEN']
+        STDOUT.puts 'RTC_TOKEN not set, skipping PR update!'
+      end
       STDOUT.puts 'Updating PR'.cyan
 
       require 'octokit'
