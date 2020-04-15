@@ -27,9 +27,9 @@ class Runner
   def error_message
     error_message = ["New offenses:\n"]
     offenses.each_pair do |filename, offenses|
-      error_message << "\t-#{filename}:\n"
+      error_message << "  - #{filename}:\n"
       offenses.each do |cop, value|
-        error_message << "\t\t-#{cop}: #{value}\n"
+        error_message << "    - #{cop}: #{value}\n"
       end
     end
     error_message.join
