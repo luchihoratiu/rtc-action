@@ -17,7 +17,7 @@ class Application
         error_message = runner.error_message
         STDOUT.puts error_message
 
-        comment = { body: error_message.no_colors }
+        comment = { body: error_message }
       end
 
       update_github_pr(comment) if ENV['UPDATE_PR'] == 'true'
