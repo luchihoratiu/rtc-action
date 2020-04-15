@@ -9,13 +9,12 @@
 This action will use `.rubocop_todo.yml` and will determine if new offenses were added in the current commit.
 
 How it works:
-
- - parse `rubocop_todo.yml` and extract number of offenses for each Cop.
- - execute `rubocop --auto-gen-config` to generate the new config.
- - parse again `rubocop_todo.yml` and extract number of offenses for each Cop.
- - make a diff between old offenses and new offenses.
- - if `new offenses > old offenses` it will print how many offenses were added and to which Cops.
- - prints a summary.
+ - get modified files.
+ - execute `rubocop --auto-gen-config --format j` to get the offenses for the changed files.
+ - move back before the merge cimmut
+ - execute `rubocop --auto-gen-config --format j` to get the offenses for the changed files before the PR.
+ - parse again the extracted data and make a  diff between old offenses and new offenses.
+ - print a summary containing the new offenses per file and cop.
 
 ### How to use PR updates functionality:
  - is recommended to create a separate github user that will only have read access and will post updates.
@@ -27,6 +26,13 @@ How it works:
   RTC_TOKEN: ${{ secrets.YOUR_TOKEN }}
   UPDATE_PR: true
  ```
+
+### ENV configurations:
+```
+  RTC_TOKEN: ${{ secrets.YOUR_TOKEN }} # token used for posting updates
+  UPDATE_PR: bool # weather to post updates as comments or not
+  FORCE_ERROR_EXIT: bool # force the job to be mark as failed if new offenses are added
+```
 
 ### Example usage:
 ```yaml
@@ -43,6 +49,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: gimmyxd/rtc-action@0.0.5
+      env:
+          RTC_TOKEN: ${{ secrets.RTC_TOKEN }}
+          UPDATE_PR: true
 ```
 
 ### Example Job Result
