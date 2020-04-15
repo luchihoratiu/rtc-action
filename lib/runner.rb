@@ -25,11 +25,14 @@ class Runner
   end
 
   def error_message
-    error_message = []
-    offenses.each_pair do |key, value|
-      error_message << "#{key} has #{value} new offenses".red
+    error_message = ["New offenses:\n"]
+    offenses.each_pair do |filename, offenses|
+      error_message << "\t-#{filename}:\n"
+      offenses.each do |cop, value|
+        error_message << "\t\t-#{cop}: #{value}\n"
+      end
     end
-    error_message.join("\n")
+    error_message.join
   end
 
   def execute
