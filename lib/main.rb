@@ -22,7 +22,8 @@ class Application
 
       update_github_pr(comment) if ENV['UPDATE_PR'] == 'true'
 
-      exit runner.exit_code
+      exit runner.exit_code if ENV['FORCE_ERROR_EXIT']
+      exit 0
     end
 
     private
