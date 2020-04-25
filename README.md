@@ -9,9 +9,9 @@
 This action will use `rubocop --auto-gen-config` to determine if new offenses were added in the current PR.
 
 How it works:
- - get modified files.
+ - get a list of changes files.
  - execute `rubocop --auto-gen-config --format j` to get the offenses for the changed files.
- - move back before the merge cimmut
+ - move back before the merge commit.
  - execute `rubocop --auto-gen-config --format j` to get the offenses for the changed files before the PR.
  - parse again the extracted data and make a  diff between old offenses and new offenses.
  - print a summary containing the new offenses per file and cop.
