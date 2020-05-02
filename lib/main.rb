@@ -8,17 +8,11 @@ class Application
     def run
       runner = Runner.new
       runner.execute
-      if runner.success?
-        msg = 'No new offenses found!'
-        STDOUT.puts(msg.green)
 
-        comment = { body: "#{msg} :thumbsup:" }
-      else
-        error_message = runner.error_message
-        STDOUT.puts error_message
+      message = runner.message
+      STDOUT.puts message
 
-        comment = { body: error_message }
-      end
+      comment = { body: message }
 
       update_github_pr(comment) if ENV['UPDATE_PR'] == 'true'
 
