@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require_relative 'rubocop_loader'
-require_relative 'rubocop_todo_parser'
-require_relative 'rubocop_output_parser'
-require 'hashdiff'
 require 'open3'
+require 'hashdiff'
+
+require_relative 'helpers/rubocop_loader'
+require_relative 'helpers/rubocop_todo_parser'
+require_relative 'helpers/rubocop_output_parser'
+require_relative 'helpers/diff_extractor'
 
 class Runner
-  DELIMITER = '--'
-
   attr_reader :offenses
 
   def initialize
@@ -23,37 +23,22 @@ class Runner
     new_offenses.empty?
   end
 
-  def message
-    message = ["New offenses:\n".bold]
-    new_offenses.each_pair do |filename, offenses|
-      message << "  - #{filename}:\n"
-      offenses.each do |cop, value|
-        message << "    - #{cop}: #{value}\n".italic
-      end
-    end
-
-    message << "\nFixed_offenses:\n".bold
-    fixed_offenses.each_pair do |filename, offenses|
-      message << "  - #{filename}:\n"
-      offenses.each do |cop, value|
-        message << "    - #{cop}: #{value}\n".italic
-      end
-    end
-
-    message.join
-  end
-
   def execute
     STDOUT.puts('Installing gems'.cyan)
     system('bundle install -j4 --retry 3 --quiet')
     STDOUT.puts("Success.\n\n".green)
 
     if files.any?
-      STDOUT.puts("inspecting:\n- #{files.join("\n- ")}".cyan)
+      STDOUT.puts("Inspecting:\n- #{files.join("\n- ")}".cyan)
 
       STDOUT.puts("\nGenerating diff".cyan)
-      diff = Hashdiff.diff(pr_offenses, master_offenses, delimiter: DELIMITER)
-      self.offenses = extract_form_diff(diff)
+
+      diff_hash = Hashdiff.diff(
+        pr_offenses, master_offenses,
+        delimiter: DiffExtractor::DELIMITER
+      )
+      self.offenses = DiffExtractor.call(diff_hash)
+
       STDOUT.puts("Done. \n\n".green)
     else
       STDOUT.puts('No files to inspect'.cyan)
@@ -86,32 +71,5 @@ class Runner
 
   def fixed_offenses
     offenses[:fixed_offenses] || {}
-  end
-
-  def extract_form_diff(diff)
-    offenses = {
-      new_offenses: {},
-      fixed_offenses: {}
-    }
-
-    diff.each do |line|
-      file, cop = line[1].split(DELIMITER)
-
-      case line[0]
-      when '~'
-        message = "changed from #{line[3]} to #{line[2]}"
-        if line[2] > line[3]
-          (offenses[:new_offenses][file] ||= {})[cop] = message
-        else
-          (offenses[:fixed_offenses][file] ||= {})[cop] = message
-        end
-      when '-'
-        (offenses[:new_offenses][file] ||= {})[cop] = "changed from 0 to #{line[2]}"
-      when '+'
-        (offenses[:fixed_offenses][file] ||= {})[cop] = "changed from 0 to #{line[2]}"
-      end
-    end
-
-    offenses
   end
 end

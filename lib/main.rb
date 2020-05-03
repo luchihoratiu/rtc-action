@@ -2,14 +2,16 @@
 
 require_relative 'runner'
 require_relative 'core_extensions/string'
+require_relative 'helpers/message_formatter'
 
 class Application
   class << self
     def run
       runner = Runner.new
       runner.execute
+      offenses = runner.offenses
 
-      message = runner.message
+      message = MessageFormatrer.call(offenses)
       STDOUT.puts message
 
       comment = { body: message }
