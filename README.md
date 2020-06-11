@@ -48,8 +48,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: gimmyxd/rtc-action@0.0.5
-      env:
+      - uses: gimmyxd/rtc-action@0.2.0
+        env:
           RTC_TOKEN: ${{ secrets.RTC_TOKEN }}
           UPDATE_PR: true
 ```
