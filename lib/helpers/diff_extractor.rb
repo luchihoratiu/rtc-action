@@ -29,7 +29,7 @@ class DiffExtractor
         when '-'
           (offenses[:new_offenses][file] ||= {})[cop] = "changed from 0 to #{line[2]}"
         when '+'
-          (offenses[:fixed_offenses][file] ||= {})[cop] = "changed from 0 to #{line[2]}"
+          (offenses[:fixed_offenses][file] ||= {})[cop] = "changed from #{line[2]} to 0"
         end
       end
 
