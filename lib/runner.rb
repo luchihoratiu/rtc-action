@@ -54,14 +54,14 @@ class Runner
   end
 
   def pr_offenses
-    pr_raw_data = `rubocop --auto-gen-config --exclude-limit 2000 --format j #{files.join(' ')}`
+    pr_raw_data = `bundle exec rubocop --auto-gen-config --exclude-limit 2000 --format j #{files.join(' ')}`
     RubcopOutputParser.call(pr_raw_data)
   end
 
   def master_offenses
     Open3.capture3('git checkout . && git checkout HEAD^')
 
-    master_raw_data = `rubocop --auto-gen-config --exclude-limit 2000 --format j #{files.join(' ')}`
+    master_raw_data = `bundle exec rubocop --auto-gen-config --exclude-limit 2000 --format j #{files.join(' ')}`
     RubcopOutputParser.call(master_raw_data)
   end
 
