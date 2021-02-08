@@ -1,0 +1,27 @@
+name: Run Command
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:        
+      - uses: actions/checkout@v2
+
+      - name: Save PR number
+        run: |
+          mkdir -p ./output
+          echo '${{ github.event.number }}' > ./output/nr
+          echo 'This is a comment from ${{ github.event.number }}' > ./output/text
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: output
+          path: output/
