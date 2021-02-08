@@ -1,0 +1,37 @@
+---
+name: Comment on PR2
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull Request number'
+        required: true
+      text:
+        description: 'Comment text'
+        required: false
+        default: 'test text'
+
+  repository_dispatch:
+    types: [comment]
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    name: Comment
+    steps:
+      - name: Comment given text
+        uses: actions/github-script@v4
+        with:
+          script: |
+            github.issues.createComment({
+              issue_number: '${{ github.event.client_payload.pr_number }}',
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'DEF'
+            })
+
+
+curl -X POST \
+    -H "Accept: application/vnd.github.v3+json" \
+    --data '{"event_type": "build", "client_payload": { "pr_number": "1", "text": "curl test"}}' \
+    https://api.github.com/repos/luchihoratiu/rtc-action/dispatches
