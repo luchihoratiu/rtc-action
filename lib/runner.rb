@@ -50,7 +50,9 @@ class Runner
   attr_writer :offenses
 
   def files
-    @files ||= `git diff --name-only --diff-filter=M HEAD HEAD~1`.split("\n").select { |e| e =~ /.rb/ }
+    @files ||= `git diff --name-only --diff-filter=M HEAD HEAD~1`.split("\n").select do |file|
+      file =~ /.rb/ && rubocop_excluded.none? { |excluded| Pathname.new(file).fnmatch?(excluded) }
+    end
   end
 
   def pr_offenses
@@ -71,5 +73,12 @@ class Runner
 
   def fixed_offenses
     offenses[:fixed_offenses] || {}
+  end
+
+  def rubocop_excluded
+    require 'psych'
+    Psych.load_file("#{Dir.pwd}/.rubocop.yml")&.dig('AllCops', 'Exclude')
+  rescue StandardError
+    []
   end
 end
