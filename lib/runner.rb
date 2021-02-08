@@ -50,6 +50,7 @@ class Runner
   attr_writer :offenses
 
   def files
+    require 'pathname'
     @files ||= `git diff --name-only --diff-filter=M HEAD HEAD~1`.split("\n").select do |file|
       file =~ /.rb/ && rubocop_excluded.none? { |excluded| Pathname.new(file).fnmatch?(excluded) }
     end
