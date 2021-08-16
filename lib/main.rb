@@ -7,11 +7,11 @@ require_relative 'helpers/message_formatter'
 class Application
   class << self
     def run
-      runner = Runner.new
-      runner.execute
-      offenses = runner.offenses
+      # runner = Runner.new
+      # runner.execute
+      # offenses = runner.offenses
 
-      message = MessageFormatrer.call(offenses)
+      message = "Test message"
       STDOUT.puts message
 
       comment = { body: message }
