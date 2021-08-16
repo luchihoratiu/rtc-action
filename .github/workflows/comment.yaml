@@ -1,0 +1,28 @@
+---
+name: Comment on PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull Request number'
+        required: true
+      text:
+        description: 'Comment text'
+        required: false
+        default: 'test text'
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    name: Comment
+    steps:
+      - name: Comment given text
+        uses: actions/github-script@v4
+        with:
+          script: |
+            github.issues.createComment({
+              issue_number: '${{ github.event.inputs.pr_number }}',
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '${{ github.event.inputs.text }}'
+            })

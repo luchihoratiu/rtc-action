@@ -7,11 +7,12 @@ require_relative 'helpers/message_formatter'
 class Application
   class << self
     def run
-      runner = Runner.new
-      runner.execute
-      offenses = runner.offenses
+      # runner = Runner.new
+      # runner.execute
+      # offenses = runner.offenses
 
-      message = MessageFormatrer.call(offenses)
+
+      message = "Test message"
       STDOUT.puts message
 
       comment = { body: message }
@@ -32,12 +33,18 @@ class Application
 
       require 'octokit'
 
-      client = Octokit::Client.new(access_token: ENV['RTC_TOKEN'])
 
       repo = ENV['GITHUB_REPOSITORY']
-      pr_number = ENV['GITHUB_REF'].delete('^0-9').to_i
+      # pr_number = ENV['GITHUB_REF'].delete('^0-9').to_i
+      pr_number = 1
       event = 'COMMENT'
 
+      STDOUT.puts repo
+      STDOUT.puts pr_number
+      STDOUT.puts event
+
+      client = Octokit::Client.new(access_token: ENV['RTC_TOKEN'])
+      
       pull_request = client.create_pull_request_review(repo, pr_number, comment)
       client.submit_pull_request_review(repo, pr_number, pull_request.id, event, {})
     end
