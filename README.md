@@ -1,10 +1,8 @@
 # RuboCop TODO Checker
-
 ![alt text](https://img.shields.io/badge/RUBY-~>2.3-red)
 ![alt text](https://img.shields.io/badge/VERSION-0.1.1-brightgreen)
-
 ### Docker based github action usses ruby and rubocop.
-
+fadsfasd
 ### Concepts
 This action will use `rubocop --auto-gen-config` to determine if new offenses were added in the current PR.
 
